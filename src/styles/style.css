@@ -1,0 +1,229 @@
+:root {
+    --sidebar-width: 300px;
+    --header-height: 60px;
+    --method-get: #61affe;
+    --method-post: #49cc90;
+    --method-put: #fca130;
+    --method-delete: #f93e3e;
+    --method-patch: #50e3c2;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background: #f5f5f5;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.version-selector {
+    margin-bottom: 1rem;
+}
+
+.version-selector select {
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.method {
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    min-width: 50px;
+    text-align: center;
+    display: inline-block;
+}
+
+.method.get { background-color: var(--method-get); }
+.method.post { background-color: var(--method-post); }
+.method.put { background-color: var(--method-put); }
+.method.delete { background-color: var(--method-delete); }
+.method.patch { background-color: var(--method-patch); }
+
+.endpoints-list {
+    margin-top: 1rem;
+    display: block;
+}
+
+.endpoint {
+    border: 1px solid #ddd;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.endpoint-path {
+    padding: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    word-break: break-all;
+    color: #0d1117;
+    max-width: 80%;
+}
+
+.endpoint-path:hover {
+    background: #e9ecef;
+}
+
+.methods {
+    display: flex;
+    gap: 0.5rem;
+    margin-right: 1rem;
+}
+
+.path-text {
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.endpoint-content {
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    display: block;
+}
+
+.endpoint-content.expanded {
+    display: block;
+}
+
+.parameters table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.parameters th,
+.parameters td {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.parameters th {
+    background: #f5f5f5;
+}
+
+.response {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.endpoint-link {
+    font-size: 0.875rem;
+    font-family: monospace;
+}
+
+.endpoint-details code {
+    font-size: 0.875rem;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    padding: 0.5rem 0.75rem;
+}
+
+#categories-list .nav-item button {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+}
+
+#categories-list .list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 0.5rem 1rem;
+}
+
+.endpoint-row {
+    border: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.endpoint-row:nth-child(odd) {
+    background-color: #fafbfc;
+}
+
+.endpoint-header {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    background: transparent;
+    border-bottom: none;
+}
+
+.endpoint-header:hover {
+    background-color: rgba(0,0,0,0.02);
+}
+
+.endpoint-methods {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    min-width: 55px;
+}
+
+.endpoint-details {
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.category-header {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.method-section {
+    padding: 1rem;
+}
+
+.endpoint-path-container {
+    flex: 1;
+    min-width: 0; /* Enable text wrapping */
+}
+
+.endpoint-description {
+    color: #57606a;
+    font-size: 0.8125rem;
+    margin-top: 0.25rem;
+    line-height: 1.4;
+}
+
+/* Update sidebar category sorting */
+#categories-list {
+    display: flex;
+    flex-direction: column;
+}
+
+#categories-list .nav-item {
+    order: attr(data-name);
+}
+
+/* Make the expand button more compact */
+.expand-btn {
+    padding: 0;
+    font-size: 0.875rem;
+    margin-top: 2px;
+}
+
+/* Adjust spacing for better density */
+.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
