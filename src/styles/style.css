@@ -95,7 +95,7 @@
 }
 
 .endpoint-content {
-    padding: 1rem;
+    padding: 0 !important;
     border-top: 1px solid #ddd;
     display: block;
 }
@@ -112,7 +112,7 @@
 
 .parameters th,
 .parameters td {
-    padding: 0.5rem;
+    padding: 0.5rem !important;
     border: 1px solid #ddd;
     text-align: left;
 }
@@ -139,7 +139,7 @@
 
 .card-header {
     background-color: #f8f9fa;
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem !important;
 }
 
 #categories-list .nav-item button {
@@ -156,6 +156,7 @@
 .endpoint-row {
     border: none;
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    margin-bottom: 0.5rem !important;
 }
 
 .endpoint-row:nth-child(odd) {
@@ -167,6 +168,7 @@
     transition: background-color 0.2s;
     background: transparent;
     border-bottom: none;
+    padding: 0.25rem 0.5rem !important;
 }
 
 .endpoint-header:hover {
@@ -191,7 +193,12 @@
 }
 
 .method-section {
-    padding: 1rem;
+    padding: 0.75rem !important;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.method-section:last-child {
+    border-bottom: none;
 }
 
 .endpoint-path-container {
@@ -226,4 +233,22 @@
 /* Adjust spacing for better density */
 .mb-2 {
     margin-bottom: 0.5rem !important;
+}
+
+/* Update background colors for method sections */
+.method-bg.get { background-color: rgba(97, 175, 254, 0.1); }
+.method-bg.post { background-color: rgba(73, 204, 144, 0.1); }
+.method-bg.put { background-color: rgba(252, 161, 48, 0.1); }
+.method-bg.delete { background-color: rgba(249, 62, 62, 0.1); }
+.method-bg.patch { background-color: rgba(80, 227, 194, 0.1); }
+
+/* Make badges more compact */
+.badge {
+    padding: 0.25em 0.5em;
+}
+
+/* Adjust spacing in endpoint details */
+.method-header {
+    padding: 0.5rem !important;
+    margin-bottom: 0.75rem !important;
 }

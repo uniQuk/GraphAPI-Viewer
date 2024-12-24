@@ -79,35 +79,43 @@ class APIViewer {
             path
         }));
 
-        // Update the main content area
+        // Group endpoints by path
+        const groupedEndpoints = {};
+        endpoints.forEach(endpoint => {
+            if (!groupedEndpoints[endpoint.path]) {
+                groupedEndpoints[endpoint.path] = [];
+            }
+            groupedEndpoints[endpoint.path].push(endpoint);
+        });
+
         this.apiContent.innerHTML = `
-            <div class="category-header mb-4">
+            <div class="category-header mb-3">
                 <h2>${category}</h2>
                 <p class="text-muted">${data.info?.description || ''}</p>
             </div>
             <div class="endpoints-container">
-                ${endpoints.map(endpoint => `
-                    <div class="endpoint-row card mb-3" data-hash="${endpoint.hash}">
-                        <div class="card-header p-3 d-flex align-items-center justify-content-between endpoint-header" role="button">
-                            <div class="d-flex align-items-center flex-grow-1">
-                                <div class="endpoint-methods me-3">
-                                    <!-- Methods will be dynamically added -->
+                ${Object.entries(groupedEndpoints).map(([path, pathEndpoints]) => 
+                    pathEndpoints.map(endpoint => `
+                        <div class="endpoint-row card" data-hash="${endpoint.hash}">
+                            <div class="endpoint-header d-flex align-items-center justify-content-between" role="button">
+                                <div class="d-flex align-items-center flex-grow-1">
+                                    <div class="endpoint-methods me-2">
+                                        <!-- Methods will be dynamically added -->
+                                    </div>
+                                    <div class="endpoint-path text-truncate">
+                                        <code>${path}</code>
+                                    </div>
                                 </div>
-                                <div class="endpoint-path text-truncate">
-                                    ${endpoint.path}
-                                </div>
+                                <button class="btn btn-sm btn-link text-decoration-none expand-btn p-0">
+                                    <i class="bi bi-chevron-down"></i>
+                                </button>
                             </div>
-                            <button class="btn btn-sm btn-link text-decoration-none expand-btn">
-                                <i class="bi bi-chevron-down"></i>
-                            </button>
-                        </div>
-                        <div class="card-body p-0 endpoint-details collapse">
-                            <div class="p-3">
-                                Loading...
+                            <div class="endpoint-details collapse">
+                                <div>Loading...</div>
                             </div>
                         </div>
-                    </div>
-                `).join('')}
+                    `).join('')
+                ).join('')}
             </div>
         `;
 
@@ -161,27 +169,27 @@ class APIViewer {
         return `
             <div class="endpoint-content">
                 ${Object.entries(pathData).map(([method, methodData]) => `
-                    <div class="method-section mb-4">
-                        <div class="method-header d-flex align-items-center gap-2 mb-3">
+                    <div class="method-section method-bg ${method.toLowerCase()}">
+                        <div class="method-header d-flex align-items-center gap-2">
                             <span class="method ${method.toLowerCase()}">${method}</span>
-                            <code class="ms-2">${path}</code>
+                            <code>${path}</code>
                         </div>
                         ${methodData.summary ? `
-                            <div class="mb-3">
-                                <h5>Summary</h5>
-                                <p class="text-muted">${methodData.summary}</p>
+                            <div class="mb-2">
+                                <h6 class="mb-1">Summary</h6>
+                                <p class="text-muted mb-0">${methodData.summary}</p>
                             </div>
                         ` : ''}
                         ${methodData.description ? `
-                            <div class="mb-3">
-                                <h5>Description</h5>
-                                <p class="text-muted">${methodData.description}</p>
+                            <div class="mb-2">
+                                <h6 class="mb-1">Description</h6>
+                                <p class="text-muted mb-0">${methodData.description}</p>
                             </div>
                         ` : ''}
                         ${this.renderParameters(methodData.parameters)}
                         ${this.renderResponseSchema(methodData.responses)}
                     </div>
-                `).join('<hr>')}
+                `).join('')}
             </div>
         `;
     }

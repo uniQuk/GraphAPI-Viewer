@@ -66,13 +66,12 @@ Then visit http://localhost:8000 in your browser.
 
 ## Site Features
 
-- 📱 Responsive, compact layout design
-- 🎯 High information density endpoint listing
-- 🎨 Color-coded HTTP method indicators
+- 📱 Responsive design using Bootstrap
 - 🔄 Switch between v1.0 and beta API versions
 - 📁 Collapsible category sidebar
+- 🎨 Color-coded HTTP methods
 - ⚡ Lazy loading of endpoint details
-- 📊 Row-based endpoint visualization
+- 📊 Structured display of parameters and responses
 
 ## Directory Structure
 
@@ -96,3 +95,33 @@ The `build` directory contains the complete static site that can be deployed to:
 - Netlify
 - Any static file hosting service
 - Local web server (Apache, Nginx, etc.)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Third-Party Licenses
+
+This project uses the following third-party libraries:
+
+### Bootstrap 5.3.2
+- License: MIT
+- Copyright: 2011-2023 The Bootstrap Authors
+- Website: https://getbootstrap.com/
+
+### Bootstrap Icons 1.11.1
+- License: MIT
+- Copyright: 2019-2023 The Bootstrap Authors
+- Website: https://icons.getbootstrap.com/
+
+### PyYAML
+- License: MIT
+- Copyright: 2017-2021 Ingy döt Net & Kirill Simonov
+- Website: https://pyyaml.org/
+
+### Requests
+- License: Apache 2.0
+- Copyright: 2019 Kenneth Reitz
+- Website: https://requests.readthedocs.io/
+
+For full license texts, see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)
