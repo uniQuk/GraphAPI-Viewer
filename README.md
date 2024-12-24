@@ -66,12 +66,13 @@ Then visit http://localhost:8000 in your browser.
 
 ## Site Features
 
-- 📱 Responsive design using Bootstrap
+- 📱 Responsive, compact layout design
+- 🎯 High information density endpoint listing
+- 🎨 Color-coded HTTP method indicators
 - 🔄 Switch between v1.0 and beta API versions
 - 📁 Collapsible category sidebar
-- 🎨 Color-coded HTTP methods
 - ⚡ Lazy loading of endpoint details
-- 📊 Structured display of parameters and responses
+- 📊 Row-based endpoint visualization
 
 ## Directory Structure
 
