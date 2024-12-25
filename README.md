@@ -63,7 +63,11 @@ Visit http://localhost:8000 in your browser.
 - 🎨 Color-coded HTTP methods for easy identification
 - ⚡ Lazy loading of endpoint details
 - 📊 Structured parameter and response displays
-- 🔍 Clear endpoint path organization
+- 🔍 Clear endpoint path organization with:
+  - Logical path segmentation
+  - Method grouping
+  - Tag-based categorization
+  - Endpoint summaries
 - 💾 Persistent theme preferences
 - 📱 Mobile-friendly interface
 
