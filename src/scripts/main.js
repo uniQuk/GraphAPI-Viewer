@@ -4,10 +4,13 @@ class APIViewer {
         this.versionSelect = document.getElementById('version-select');
         this.categoriesList = document.getElementById('categories-list');
         this.apiContent = document.getElementById('api-content');
+        this.sidebar = document.getElementById('sidebar');
+        this.themeToggle = document.getElementById('theme-toggle');
         
         this.initEventListeners();
         this.loadCategories();
         this.pathIndex = {}; // Store path mappings
+        this.initThemeToggle();
     }
 
     initEventListeners() {
@@ -35,15 +38,22 @@ class APIViewer {
 
         this.categoriesList.innerHTML = sortedCategories.map(category => `
             <div class="nav-item mb-1" data-name="${category.name}">
-                <button class="btn btn-outline-secondary w-100 text-start" data-category="${category.name}">
-                    <i class="bi bi-folder me-2"></i>${category.name}
+                <button class="btn w-100 text-start" data-category="${category.name}">
+                    <i class="bi bi-folder2"></i>
+                    <span>${category.name}</span>
                 </button>
             </div>
         `).join('');
 
         document.querySelectorAll('[data-category]').forEach(button => {
             button.addEventListener('click', (e) => {
-                const category = e.target.dataset.category;
+                // Remove active class from all buttons
+                document.querySelectorAll('[data-category]').forEach(btn => 
+                    btn.classList.remove('active')
+                );
+                // Add active class to clicked button
+                e.currentTarget.classList.add('active');
+                const category = e.currentTarget.dataset.category;
                 this.loadEndpoints(category);
             });
         });
@@ -66,7 +76,8 @@ class APIViewer {
     async loadEndpointData(category, hashedPath) {
         try {
             const response = await fetch(`${this.currentVersion}/${category}/${hashedPath}.json`);
-            return await response.json();
+            const data = await response.json();
+            return data;
         } catch (error) {
             console.error('Error loading endpoint data:', error);
             return null;
@@ -89,35 +100,49 @@ class APIViewer {
         });
 
         this.apiContent.innerHTML = `
-            <div class="category-header mb-3">
+            <div class="category-header">
                 <h2>${category}</h2>
-                <p class="text-muted">${data.info?.description || ''}</p>
+                ${data.info?.description ? `<p class="text-muted mb-0">${data.info.description}</p>` : ''}
             </div>
             <div class="endpoints-container">
                 ${Object.entries(groupedEndpoints).map(([path, pathEndpoints]) => 
                     pathEndpoints.map(endpoint => `
-                        <div class="endpoint-row card" data-hash="${endpoint.hash}">
-                            <div class="endpoint-header d-flex align-items-center justify-content-between" role="button">
-                                <div class="d-flex align-items-center flex-grow-1">
-                                    <div class="endpoint-methods me-2">
+                        <div class="endpoint-row" data-hash="${endpoint.hash}">
+                            <div class="endpoint-header">
+                                <div>
+                                    <div class="endpoint-methods">
                                         <!-- Methods will be dynamically added -->
                                     </div>
-                                    <div class="endpoint-path text-truncate">
+                                    <div class="endpoint-path">
                                         <code>${path}</code>
                                     </div>
                                 </div>
-                                <button class="btn btn-sm btn-link text-decoration-none expand-btn p-0">
+                                <button class="btn btn-sm btn-link expand-btn">
                                     <i class="bi bi-chevron-down"></i>
                                 </button>
                             </div>
                             <div class="endpoint-details collapse">
-                                <div>Loading...</div>
+                                <div class="endpoint-content"></div>
                             </div>
                         </div>
                     `).join('')
                 ).join('')}
             </div>
         `;
+
+        // Load and display available methods for each endpoint
+        endpoints.forEach(async endpoint => {
+            const data = await this.loadEndpointData(category, endpoint.hash);
+            if (data) {
+                const methodsContainer = document.querySelector(`[data-hash="${endpoint.hash}"] .endpoint-methods`);
+                if (methodsContainer) {
+                    const methods = Object.keys(Object.values(data)[0]);
+                    methodsContainer.innerHTML = methods.map(method => 
+                        `<span class="method ${method.toLowerCase()}">${method}</span>`
+                    ).join('');
+                }
+            }
+        });
 
         // Handle endpoint expansion
         document.querySelectorAll('.endpoint-header').forEach(header => {
@@ -130,7 +155,7 @@ class APIViewer {
                     const hash = endpointRow.dataset.hash;
                     const data = await this.loadEndpointData(category, hash);
                     if (data) {
-                        detailsSection.querySelector('div').innerHTML = this.renderEndpointDetails(data);
+                        detailsSection.querySelector('.endpoint-content').innerHTML = this.renderEndpointDetails(data);
                     }
                 }
                 
@@ -138,18 +163,6 @@ class APIViewer {
                 expandBtn.classList.toggle('bi-chevron-down');
                 expandBtn.classList.toggle('bi-chevron-up');
             });
-        });
-
-        // Load and display available methods for each endpoint
-        endpoints.forEach(async endpoint => {
-            const data = await this.loadEndpointData(category, endpoint.hash);
-            if (data) {
-                const methodsContainer = document.querySelector(`[data-hash="${endpoint.hash}"] .endpoint-methods`);
-                const methods = Object.keys(Object.values(data)[0]);
-                methodsContainer.innerHTML = methods.map(method => 
-                    `<span class="method ${method.toLowerCase()}">${method}</span>`
-                ).join('');
-            }
         });
     }
 
@@ -198,15 +211,15 @@ class APIViewer {
         if (!parameters?.length) return '';
         return `
             <div class="mb-4">
-                <h5>Parameters</h5>
+                <h5 class="mb-3">Parameters</h5>
                 <div class="table-responsive">
-                    <table class="table table-striped">
+                    <table class="table">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>In</th>
-                                <th>Type</th>
-                                <th>Required</th>
+                                <th style="width: 20%">Name</th>
+                                <th style="width: 10%">In</th>
+                                <th style="width: 15%">Type</th>
+                                <th style="width: 15%">Required</th>
                                 <th>Description</th>
                             </tr>
                         </thead>
@@ -217,7 +230,7 @@ class APIViewer {
                                     <td><span class="badge bg-secondary">${param.in || ''}</span></td>
                                     <td><span class="badge bg-secondary">${param.schema?.type || param.type || ''}</span></td>
                                     <td>${param.required ? '<span class="badge bg-danger">Required</span>' : ''}</td>
-                                    <td>${param.description || ''}</td>
+                                    <td class="text-wrap">${param.description || ''}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -234,17 +247,17 @@ class APIViewer {
                 <div class="list-group">
                     ${Object.entries(responses).map(([code, response]) => `
                         <div class="list-group-item">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <code>${code}</code>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="d-flex flex-column">
+                                    <code class="mb-1">${code}</code>
                                     ${response.description ? `
-                                        <span class="ms-2">${response.description}</span>
+                                        <span class="text-muted">${response.description}</span>
                                     ` : ''}
                                 </div>
                                 ${response.$ref ? `
-                                    <span class="text-muted small">
-                                        <code>${response.$ref}</code>
-                                    </span>
+                                    <div class="text-muted small">
+                                        <code class="text-wrap">${response.$ref}</code>
+                                    </div>
                                 ` : ''}
                             </div>
                         </div>
@@ -252,6 +265,24 @@ class APIViewer {
                 </div>
             </div>
         `;
+    }
+
+    initThemeToggle() {
+        const setTheme = (isDark) => {
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            this.themeToggle.querySelector('i').classList.remove('bi-sun-fill', 'bi-moon-fill');
+            this.themeToggle.querySelector('i').classList.add(isDark ? 'bi-moon-fill' : 'bi-sun-fill');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        };
+
+        this.themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            setTheme(!isDark);
+        });
+
+        // Set initial theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme === 'dark');
     }
 }
 
