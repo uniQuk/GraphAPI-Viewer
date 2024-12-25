@@ -67,7 +67,108 @@ class APIViewer {
             
             const response = await fetch(`${this.currentVersion}/${category}/_metadata.json`);
             const data = await response.json();
-            this.renderEndpoints(category, data);
+            
+            const endpoints = Object.entries(this.pathIndex).map(([hash, path]) => ({
+                hash,
+                path
+            }));
+
+            // Load all endpoint data first to get tags and summaries
+            const endpointData = await Promise.all(
+                endpoints.map(async endpoint => {
+                    const data = await this.loadEndpointData(category, endpoint.hash);
+                    return { ...endpoint, data };
+                })
+            );
+
+            // Group endpoints by tags
+            const taggedEndpoints = {};
+            endpointData.forEach(endpoint => {
+                const [path, methods] = Object.entries(endpoint.data)[0];
+                const tags = Object.values(methods)[0].tags || ['untagged'];
+                tags.forEach(tag => {
+                    if (!taggedEndpoints[tag]) {
+                        taggedEndpoints[tag] = [];
+                    }
+                    taggedEndpoints[tag].push({
+                        ...endpoint,
+                        summary: Object.values(methods)[0].summary
+                    });
+                });
+            });
+
+            // Sort tags alphabetically
+            const sortedTags = Object.keys(taggedEndpoints).sort();
+
+            this.apiContent.innerHTML = `
+                <div class="category-header">
+                    <h2>${category}</h2>
+                    ${data.info?.description ? `<p class="text-muted mb-0">${data.info.description}</p>` : ''}
+                </div>
+                <div class="endpoints-container">
+                    ${sortedTags.map(tag => `
+                        <div class="tag-section-header">${tag}</div>
+                        ${taggedEndpoints[tag].map(endpoint => `
+                            <div class="endpoint-row" data-hash="${endpoint.hash}">
+                                <div class="endpoint-header">
+                                    <div>
+                                        <div class="endpoint-methods">
+                                            <!-- Methods will be dynamically added -->
+                                        </div>
+                                        <div class="endpoint-path">
+                                            <code>${this.formatPath(endpoint.path)}</code>
+                                            ${endpoint.summary ? `
+                                                <div class="endpoint-summary">${endpoint.summary}</div>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-link expand-btn">
+                                        <i class="bi bi-chevron-down"></i>
+                                    </button>
+                                </div>
+                                <div class="endpoint-details collapse">
+                                    <div class="endpoint-content"></div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    `).join('')}
+                </div>
+            `;
+
+            // Load and display available methods for each endpoint
+            endpoints.forEach(async endpoint => {
+                const data = await this.loadEndpointData(category, endpoint.hash);
+                if (data) {
+                    const methodsContainer = document.querySelector(`[data-hash="${endpoint.hash}"] .endpoint-methods`);
+                    if (methodsContainer) {
+                        const methods = Object.keys(Object.values(data)[0]);
+                        methodsContainer.innerHTML = methods.map(method => 
+                            `<span class="method ${method.toLowerCase()}">${method}</span>`
+                        ).join('');
+                    }
+                }
+            });
+
+            // Handle endpoint expansion
+            document.querySelectorAll('.endpoint-header').forEach(header => {
+                header.addEventListener('click', async (e) => {
+                    const endpointRow = header.closest('.endpoint-row');
+                    const detailsSection = endpointRow.querySelector('.endpoint-details');
+                    const expandBtn = header.querySelector('.expand-btn i');
+                    
+                    if (!detailsSection.classList.contains('show')) {
+                        const hash = endpointRow.dataset.hash;
+                        const data = await this.loadEndpointData(category, hash);
+                        if (data) {
+                            detailsSection.querySelector('.endpoint-content').innerHTML = this.renderEndpointDetails(data);
+                        }
+                    }
+                    
+                    detailsSection.classList.toggle('show');
+                    expandBtn.classList.toggle('bi-chevron-down');
+                    expandBtn.classList.toggle('bi-chevron-up');
+                });
+            });
         } catch (error) {
             console.error('Error loading endpoints:', error);
         }
@@ -82,88 +183,6 @@ class APIViewer {
             console.error('Error loading endpoint data:', error);
             return null;
         }
-    }
-
-    renderEndpoints(category, data) {
-        const endpoints = Object.entries(this.pathIndex).map(([hash, path]) => ({
-            hash,
-            path
-        }));
-
-        // Group endpoints by path
-        const groupedEndpoints = {};
-        endpoints.forEach(endpoint => {
-            if (!groupedEndpoints[endpoint.path]) {
-                groupedEndpoints[endpoint.path] = [];
-            }
-            groupedEndpoints[endpoint.path].push(endpoint);
-        });
-
-        this.apiContent.innerHTML = `
-            <div class="category-header">
-                <h2>${category}</h2>
-                ${data.info?.description ? `<p class="text-muted mb-0">${data.info.description}</p>` : ''}
-            </div>
-            <div class="endpoints-container">
-                ${Object.entries(groupedEndpoints).map(([path, pathEndpoints]) => 
-                    pathEndpoints.map(endpoint => `
-                        <div class="endpoint-row" data-hash="${endpoint.hash}">
-                            <div class="endpoint-header">
-                                <div>
-                                    <div class="endpoint-methods">
-                                        <!-- Methods will be dynamically added -->
-                                    </div>
-                                    <div class="endpoint-path">
-                                        <code>${this.formatPath(path)}</code>
-                                    </div>
-                                </div>
-                                <button class="btn btn-sm btn-link expand-btn">
-                                    <i class="bi bi-chevron-down"></i>
-                                </button>
-                            </div>
-                            <div class="endpoint-details collapse">
-                                <div class="endpoint-content"></div>
-                            </div>
-                        </div>
-                    `).join('')
-                ).join('')}
-            </div>
-        `;
-
-        // Load and display available methods for each endpoint
-        endpoints.forEach(async endpoint => {
-            const data = await this.loadEndpointData(category, endpoint.hash);
-            if (data) {
-                const methodsContainer = document.querySelector(`[data-hash="${endpoint.hash}"] .endpoint-methods`);
-                if (methodsContainer) {
-                    const methods = Object.keys(Object.values(data)[0]);
-                    methodsContainer.innerHTML = methods.map(method => 
-                        `<span class="method ${method.toLowerCase()}">${method}</span>`
-                    ).join('');
-                }
-            }
-        });
-
-        // Handle endpoint expansion
-        document.querySelectorAll('.endpoint-header').forEach(header => {
-            header.addEventListener('click', async (e) => {
-                const endpointRow = header.closest('.endpoint-row');
-                const detailsSection = endpointRow.querySelector('.endpoint-details');
-                const expandBtn = header.querySelector('.expand-btn i');
-                
-                if (!detailsSection.classList.contains('show')) {
-                    const hash = endpointRow.dataset.hash;
-                    const data = await this.loadEndpointData(category, hash);
-                    if (data) {
-                        detailsSection.querySelector('.endpoint-content').innerHTML = this.renderEndpointDetails(data);
-                    }
-                }
-                
-                detailsSection.classList.toggle('show');
-                expandBtn.classList.toggle('bi-chevron-down');
-                expandBtn.classList.toggle('bi-chevron-up');
-            });
-        });
     }
 
     formatPath(path) {

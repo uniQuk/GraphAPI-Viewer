@@ -217,6 +217,8 @@ body {
     max-width: none;
     flex: 1;
     min-width: 0;
+    flex-direction: column;  /* Stack children vertically */
+    align-items: flex-start;  /* Align items to the start */
 }
 
 .endpoint-path:hover {
@@ -493,7 +495,7 @@ main {
     height: 100vh;
     overflow-y: auto;
     transition: margin-left 0.3s ease, width 0.3s ease;
-    padding: 1.5rem 2rem;
+    padding: 1.5rem;  /* Changed from 1.5rem 0 to add consistent padding */
     overflow-x: hidden;  /* Prevent horizontal scroll */
     width: auto;
     flex: 1;
@@ -771,6 +773,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0;
     max-width: none;
     width: 100%;
+    padding: 0 1rem;  /* Ensure consistent horizontal padding */
 }
 
 /* Category spacing in sidebar */
@@ -805,7 +808,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Main content padding adjustment */
 main {
-    padding: 1.5rem 0;
+    padding: 1.5rem;  /* Changed from 1.5rem 0 to add consistent padding */
 }
 
 /* Endpoint row improvements */
@@ -937,4 +940,31 @@ main {
 
 .method-header .endpoint-path code span {
     display: inline-block;
+}
+
+/* Add endpoint summary styles */
+.endpoint-summary {
+    color: var(--text-muted);
+    font-size: 0.813rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin-top: 0.5rem;
+    padding: 0 0 0.25rem 0;
+    display: block;  /* Force to new line */
+    width: 100%;
+}
+
+/* Add tag section header styles */
+.tag-section-header {
+    color: var(--text-color);
+    font-size: 1.25rem;  /* Increased from 1rem */
+    font-weight: 600;
+    padding: 1rem;  /* Added horizontal padding */
+    margin: 1.5rem 0 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-left: 1rem;  /* Add left margin to align with endpoints */
+    margin-right: 1rem;  /* Add right margin to match */
+}
+
+.tag-section-header:first-child {
+    margin-top: 0;
 }
