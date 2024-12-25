@@ -114,7 +114,7 @@ class APIViewer {
                                         <!-- Methods will be dynamically added -->
                                     </div>
                                     <div class="endpoint-path">
-                                        <code>${path}</code>
+                                        <code>${this.formatPath(path)}</code>
                                     </div>
                                 </div>
                                 <button class="btn btn-sm btn-link expand-btn">
@@ -164,6 +164,13 @@ class APIViewer {
                 expandBtn.classList.toggle('bi-chevron-up');
             });
         });
+    }
+
+    formatPath(path) {
+        // Split the path by forward slashes, but keep the slashes
+        return path.split(/(?=\/)/).map(segment => 
+            `<span>${segment}</span>`
+        ).join('');
     }
 
     renderMethods(path) {

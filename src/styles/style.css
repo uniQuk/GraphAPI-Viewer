@@ -853,6 +853,13 @@ main {
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 100%;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    display: inline-block;
+}
+
+/* Add this new style to handle path segments */
+.endpoint-path code span {
+    display: inline-block;
 }
 
 /* Fix expand button positioning */
