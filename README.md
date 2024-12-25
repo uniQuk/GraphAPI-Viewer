@@ -71,6 +71,17 @@ Visit http://localhost:8000 in your browser.
 - 💾 Persistent theme preferences
 - 📱 Mobile-friendly interface
 
+## Screenshots
+
+### Light Mode
+![Light Mode Overview](/screenshots/light-mode.png)
+
+### Dark Mode
+![Dark Mode Overview](/screenshots/dark-mode.png)
+
+### API Endpoint Details
+![Endpoint Details](/screenshots/endpoint-details.png)
+
 ## Project Structure
 
 ```
