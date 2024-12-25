@@ -2,6 +2,8 @@
 
 An interactive viewer for Microsoft Graph API's OpenAPI specifications with dark mode support and intuitive navigation.
 
+🔗 **[Live Demo](https://uniquk.github.io/graphapi-site/)**
+
 ## Prerequisites
 
 - Python 3.7+
