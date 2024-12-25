@@ -23,6 +23,12 @@ pip install pyyaml requests
 chmod +x scripts/*.py
 ```
 
+3. Set up the environment:
+```bash
+python3 -m venv env
+source env/bin/activate
+```
+
 ## Usage
 
 ### 1. Download OpenAPI Specifications
