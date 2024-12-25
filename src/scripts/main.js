@@ -192,7 +192,9 @@ class APIViewer {
                     <div class="method-section method-bg ${method.toLowerCase()}">
                         <div class="method-header d-flex align-items-center gap-2">
                             <span class="method ${method.toLowerCase()}">${method}</span>
-                            <code>${path}</code>
+                            <div class="endpoint-path">
+                                <code>${this.formatPath(path)}</code>
+                            </div>
                         </div>
                         ${methodData.summary ? `
                             <div class="mb-2">

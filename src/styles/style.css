@@ -921,3 +921,20 @@ main {
     margin: 0 0 1rem 0;
     padding: 1rem;
 }
+
+/* Method header path styles */
+.method-header .endpoint-path {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+}
+
+.method-header .endpoint-path code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    width: 100%;
+    display: inline-block;
+}
+
+.method-header .endpoint-path code span {
+    display: inline-block;
+}
