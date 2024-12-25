@@ -4,6 +4,8 @@ An interactive viewer for Microsoft Graph API's OpenAPI specifications with dark
 
 🔗 **[Live Demo](https://uniquk.github.io/graphapi-site/)**
 
+> **Note**: This is an independent project and is not affiliated with, officially maintained, or endorsed by Microsoft. The API specifications are sourced from Microsoft's official [msgraph-sdk-powershell](https://github.com/microsoftgraph/msgraph-sdk-powershell/) repository.
+
 ## Prerequisites
 
 - Python 3.7+
@@ -96,6 +98,13 @@ Visit http://localhost:8000 in your browser.
     ├── styles/          # CSS files
     └── scripts/         # JavaScript files
 ```
+
+## Data Source
+
+The OpenAPI specifications are fetched from:
+- Repository: [microsoftgraph/msgraph-sdk-powershell](https://github.com/microsoftgraph/msgraph-sdk-powershell)
+- Path: `/openApiDocs`
+- Versions: `v1.0` and `beta`
 
 ## Deployment
 
