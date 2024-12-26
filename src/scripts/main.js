@@ -25,12 +25,12 @@ class APIViewer {
         // Add home button handler
         document.getElementById('home-button').addEventListener('click', () => {
             this.router = {
-                version: 'v1.0',
+                version: this.currentVersion, // Keep current version
                 category: null,
                 tag: null,
                 endpoint: null
             };
-            this.updateURL();
+            window.location.hash = ''; // Clear the hash completely
             this.apiContent.innerHTML = `
                 <div class="text-center text-muted" id="empty-state">
                     <i class="bi bi-arrow-left-circle fs-1"></i>
@@ -221,7 +221,6 @@ class APIViewer {
                                 <span>${tag}</span>
                                 <button class="btn btn-link btn-sm copy-tag" data-tag="${tag}" title="Copy link to section">
                                     <i class="bi bi-link-45deg"></i>
-                                    <span class="copy-feedback">Copied!</span>
                                 </button>
                             </div>
                         </div>
@@ -267,7 +266,7 @@ class APIViewer {
                             // Fallback method using textarea
                             const textarea = document.createElement('textarea');
                             textarea.value = url;
-                            textarea.style.position = 'fixed';  // Avoid scrolling
+                            textarea.style.position = 'fixed';
                             textarea.style.opacity = '0';
                             document.body.appendChild(textarea);
                             textarea.select();
@@ -275,12 +274,13 @@ class APIViewer {
                             document.body.removeChild(textarea);
                         }
                         
-                        // Show feedback
-                        const feedback = e.currentTarget.querySelector('.copy-feedback');
-                        feedback.style.opacity = '1';
+                        // Show icon feedback
+                        const icon = e.currentTarget.querySelector('i');
+                        const originalClass = icon.className;
+                        icon.className = 'bi bi-check-lg';
                         setTimeout(() => {
-                            feedback.style.opacity = '0';
-                        }, 2000);
+                            icon.className = originalClass;
+                        }, 1000);
                     } catch (err) {
                         console.error('Failed to copy:', err);
                     }

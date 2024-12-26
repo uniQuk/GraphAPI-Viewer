@@ -1013,23 +1013,6 @@ main {
     margin-left: 0.5rem;
 }
 
-.copy-feedback {
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--text-color);
-    color: var(--bg-color);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    white-space: nowrap;
-    pointer-events: none;
-    z-index: 10;
-}
-
 .copy-tag i {
     font-size: 1rem;
 }
