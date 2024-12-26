@@ -1,10 +1,11 @@
+> **Note**: This is an independent project and is not affiliated with, officially maintained, or endorsed by Microsoft. The API specifications are sourced from Microsoft's official [msgraph-sdk-powershell](https://github.com/microsoftgraph/msgraph-sdk-powershell/) repository.
+
 # Microsoft Graph API Viewer
 
 An interactive viewer for Microsoft Graph API's OpenAPI specifications with dark mode support and intuitive navigation.
 
 🔗 **[Live Demo](https://uniquk.github.io/graphapi-site/)**
 
-> **Note**: This is an independent project and is not affiliated with, officially maintained, or endorsed by Microsoft. The API specifications are sourced from Microsoft's official [msgraph-sdk-powershell](https://github.com/microsoftgraph/msgraph-sdk-powershell/) repository.
 
 ## Prerequisites
 
@@ -101,7 +102,7 @@ Visit http://localhost:8000 in your browser.
 
 ```
 .
-├── build/                # Generated site
+├── build/               # Generated site
 ├── openapi/             # API specifications
 ├── scripts/             # Build scripts
 └── src/                 # Source files
