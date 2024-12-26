@@ -257,10 +257,25 @@ class APIViewer {
                 button.addEventListener('click', async (e) => {
                     e.stopPropagation();
                     const tag = e.currentTarget.dataset.tag;
-                    const url = `${window.location.origin}${window.location.pathname}#/${this.router.version}/${this.router.category}/${tag}`;
+                    const url = `${window.location.origin}${window.location.pathname}#/${this.router.version}/${this.router.category}/${encodeURIComponent(tag)}`;
                     
                     try {
-                        await navigator.clipboard.writeText(url);
+                        // Fallback for clipboard API
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            await navigator.clipboard.writeText(url);
+                        } else {
+                            // Fallback method using textarea
+                            const textarea = document.createElement('textarea');
+                            textarea.value = url;
+                            textarea.style.position = 'fixed';  // Avoid scrolling
+                            textarea.style.opacity = '0';
+                            document.body.appendChild(textarea);
+                            textarea.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(textarea);
+                        }
+                        
+                        // Show feedback
                         const feedback = e.currentTarget.querySelector('.copy-feedback');
                         feedback.style.opacity = '1';
                         setTimeout(() => {
