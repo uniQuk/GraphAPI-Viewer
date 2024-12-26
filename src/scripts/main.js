@@ -11,11 +11,80 @@ class APIViewer {
         this.loadCategories();
         this.pathIndex = {}; // Store path mappings
         this.initThemeToggle();
+
+        // Add router state
+        this.router = {
+            version: 'v1.0',
+            category: null,
+            endpoint: null
+        };
+        
+        this.initRouter();
+    }
+
+    initRouter() {
+        // Handle initial load and back/forward navigation
+        window.addEventListener('hashchange', () => this.handleRoute());
+        window.addEventListener('load', () => this.handleRoute());
+    }
+
+    handleRoute() {
+        // Parse URL hash: #/version/category/endpoint
+        const hash = window.location.hash.slice(1) || '';
+        const [, version, category, endpoint] = hash.split('/');
+
+        // Update router state
+        this.router = {
+            version: version || 'v1.0',
+            category: category || null,
+            endpoint: endpoint || null
+        };
+
+        // Update UI based on route
+        this.updateFromRoute();
+    }
+
+    updateFromRoute() {
+        // Update version selector
+        this.versionSelect.value = this.router.version;
+        this.currentVersion = this.router.version;
+
+        // Load categories and select active one
+        this.loadCategories().then(() => {
+            if (this.router.category) {
+                const categoryButton = document.querySelector(`[data-category="${this.router.category}"]`);
+                if (categoryButton) {
+                    categoryButton.classList.add('active');
+                    this.loadEndpoints(this.router.category).then(() => {
+                        if (this.router.endpoint) {
+                            const endpoint = document.querySelector(`[data-hash="${this.router.endpoint}"]`);
+                            if (endpoint) {
+                                endpoint.querySelector('.endpoint-header').click();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    updateURL() {
+        let url = `#/${this.router.version}`;
+        if (this.router.category) {
+            url += `/${this.router.category}`;
+            if (this.router.endpoint) {
+                url += `/${this.router.endpoint}`;
+            }
+        }
+        window.history.pushState(null, '', url);
     }
 
     initEventListeners() {
         this.versionSelect.addEventListener('change', (e) => {
-            this.currentVersion = e.target.value;
+            this.router.version = e.target.value;
+            this.router.category = null;
+            this.router.endpoint = null;
+            this.updateURL();
             this.loadCategories();
         });
     }
@@ -54,6 +123,9 @@ class APIViewer {
                 // Add active class to clicked button
                 e.currentTarget.classList.add('active');
                 const category = e.currentTarget.dataset.category;
+                this.router.category = category;
+                this.router.endpoint = null;
+                this.updateURL();
                 this.loadEndpoints(category);
             });
         });
@@ -167,6 +239,10 @@ class APIViewer {
                     detailsSection.classList.toggle('show');
                     expandBtn.classList.toggle('bi-chevron-down');
                     expandBtn.classList.toggle('bi-chevron-up');
+
+                    // Update router state and URL
+                    this.router.endpoint = endpointRow.dataset.hash;
+                    this.updateURL();
                 });
             });
         } catch (error) {
