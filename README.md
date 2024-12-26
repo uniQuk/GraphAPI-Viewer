@@ -15,7 +15,7 @@ An interactive viewer for Microsoft Graph API's OpenAPI specifications with dark
 
 1. Set up the environment:
 ```bash
-python3 -m venv env
+python3 -m venv venv
 source env/bin/activate
 ```
 
