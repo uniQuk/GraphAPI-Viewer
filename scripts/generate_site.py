@@ -21,9 +21,17 @@ def generate_category_index(version_dir):
     with open(version_dir / 'index.json', 'w') as f:
         json.dump(categories, f, indent=2)
 
+def ensure_directory_exists(path):
+    """Create directory and any necessary parent directories if they don't exist"""
+    Path(path).mkdir(parents=True, exist_ok=True)
+
 def copy_static_assets():
     """Copy static assets to build directory"""
     base_dir = Path(__file__).parent.parent
+    
+    # Create required directories
+    ensure_directory_exists(base_dir / 'build/assets/css')
+    ensure_directory_exists(base_dir / 'build/assets/js')
     
     # Copy CSS
     shutil.copy2(
@@ -46,10 +54,14 @@ def copy_static_assets():
 def main():
     base_dir = Path(__file__).parent.parent
     build_dir = base_dir / 'build'
+    
+    # Ensure build directory exists
+    ensure_directory_exists(build_dir)
 
     # Generate category indexes
     for version in ['v1.0', 'beta']:
         version_dir = build_dir / version
+        ensure_directory_exists(version_dir)
         if version_dir.exists():
             generate_category_index(version_dir)
     
