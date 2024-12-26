@@ -68,7 +68,13 @@ class APIViewer {
                             const endpoint = document.querySelector(`[data-hash="${this.router.endpoint}"]`);
                             if (endpoint) {
                                 endpoint.querySelector('.endpoint-header').click();
+                                // Add slight delay to ensure content is expanded before scrolling
+                                setTimeout(() => {
+                                    endpoint.scrollIntoView({ behavior: 'smooth' });
+                                }, 100);
                             }
+                        } else if (this.router.tag) {
+                            this.scrollToTag(this.getTagId(this.router.tag));
                         }
                     });
                 }
