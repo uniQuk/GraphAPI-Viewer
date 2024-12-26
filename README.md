@@ -13,20 +13,20 @@ An interactive viewer for Microsoft Graph API's OpenAPI specifications with dark
 
 ## Setup
 
-1. Install Python dependencies:
-```bash
-pip install pyyaml requests
-```
-
-2. Make scripts executable:
-```bash
-chmod +x scripts/*.py
-```
-
-3. Set up the environment:
+1. Set up the environment:
 ```bash
 python3 -m venv env
 source env/bin/activate
+```
+
+2. Install Python dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+3. Make scripts executable:
+```bash
+chmod +x scripts/*.py
 ```
 
 ## Usage
