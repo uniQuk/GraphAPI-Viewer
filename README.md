@@ -73,6 +73,11 @@ Visit http://localhost:8000 in your browser.
 - 🎨 Color-coded HTTP methods for easy identification
 - ⚡ Lazy loading of endpoint details
 - 📊 Structured parameter and response displays
+- 🔗 Deep linking support for sharing specific:
+  - API versions
+  - Categories
+  - Tags
+  - Endpoints
 - 🔍 Clear endpoint path organization with:
   - Logical path segmentation
   - Method grouping
@@ -112,6 +117,15 @@ The OpenAPI specifications are fetched from:
 - Path: `/openApiDocs`
 - Versions: `v1.0` and `beta`
 
+## URL Structure
+
+The application supports deep linking with the following URL structure:
+Examples:
+- Version only: `/#/v1.0`
+- Category: `/#/v1.0/Identity.SignIns`
+- Tag: `/#/v1.0/Identity.SignIns/identityProviders.identityProvider`
+- Full path: `/#/v1.0/Identity.SignIns/identityProviders.identityProvider/[endpoint-hash]`
+
 ## Deployment
 
 The `build` directory can be deployed to:
@@ -119,6 +133,11 @@ The `build` directory can be deployed to:
 - Netlify
 - Any static hosting service
 - Local web servers
+
+The application automatically detects its environment and adjusts base paths:
+- For GitHub Pages: Automatically detects repository name and adjusts paths
+- For local development: Uses root path
+- For custom deployments: No configuration needed
 
 ## Tech Stack
 
