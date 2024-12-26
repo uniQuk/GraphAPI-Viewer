@@ -2,18 +2,20 @@ class APIViewer {
     constructor() {
         this.basePath = window.__BASE_PATH__ || '/';
         this.currentVersion = 'v1.0';
-        this.versionSelect = document.getElementById('version-select');
-        this.categoriesList = document.getElementById('categories-list');
-        this.apiContent = document.getElementById('api-content');
-        this.sidebar = document.getElementById('sidebar');
-        this.themeToggle = document.getElementById('theme-toggle');
         
-        this.initEventListeners();
-        this.loadCategories();
-        this.pathIndex = {}; // Store path mappings
-        this.initThemeToggle();
-
-        // Add router state
+        // Cache DOM elements
+        this.elements = {
+            versionSelect: document.getElementById('version-select'),
+            categoriesList: document.getElementById('categories-list'),
+            apiContent: document.getElementById('api-content'),
+            sidebar: document.getElementById('sidebar'),
+            themeToggle: document.getElementById('theme-toggle'),
+            homeButton: document.getElementById('home-button'),
+            mainContent: document.querySelector('main')
+        };
+        
+        // Initialize state
+        this.pathIndex = {};
         this.router = {
             version: 'v1.0',
             category: null,
@@ -21,24 +23,10 @@ class APIViewer {
             endpoint: null
         };
         
+        this.initEventListeners();
+        this.loadCategories();
+        this.initThemeToggle();
         this.initRouter();
-
-        // Add home button handler
-        document.getElementById('home-button').addEventListener('click', () => {
-            this.router = {
-                version: this.currentVersion, // Keep current version
-                category: null,
-                tag: null,
-                endpoint: null
-            };
-            window.location.hash = ''; // Clear the hash completely
-            this.apiContent.innerHTML = `
-                <div class="text-center text-muted" id="empty-state">
-                    <i class="bi bi-arrow-left-circle fs-1"></i>
-                    <h4 class="mt-3">Select a category from the sidebar</h4>
-                </div>
-            `;
-        });
     }
 
     initRouter() {
@@ -66,7 +54,7 @@ class APIViewer {
 
     updateFromRoute() {
         // Update version selector
-        this.versionSelect.value = this.router.version;
+        this.elements.versionSelect.value = this.router.version;
         this.currentVersion = this.router.version;
 
         // Load categories and select active one
@@ -110,13 +98,29 @@ class APIViewer {
     }
 
     initEventListeners() {
-        this.versionSelect.addEventListener('change', (e) => {
+        this.elements.versionSelect.addEventListener('change', (e) => {
             this.router.version = e.target.value;
             this.router.category = null;
             this.router.tag = null;
             this.router.endpoint = null;
             this.updateURL();
             this.loadCategories();
+        });
+
+        this.elements.homeButton.addEventListener('click', () => {
+            this.router = {
+                version: this.currentVersion,
+                category: null,
+                tag: null,
+                endpoint: null
+            };
+            window.location.hash = '';
+            this.elements.apiContent.innerHTML = `
+                <div class="text-center text-muted" id="empty-state">
+                    <i class="bi bi-arrow-left-circle fs-1"></i>
+                    <h4 class="mt-3">Select a category from the sidebar</h4>
+                </div>
+            `;
         });
     }
 
@@ -136,7 +140,7 @@ class APIViewer {
             a.name.localeCompare(b.name)
         );
 
-        this.categoriesList.innerHTML = sortedCategories.map(category => `
+        this.elements.categoriesList.innerHTML = sortedCategories.map(category => `
             <div class="nav-item mb-1" data-name="${category.name}">
                 <button class="btn w-100 text-start" data-category="${category.name}">
                     <i class="bi bi-folder2"></i>
@@ -148,7 +152,7 @@ class APIViewer {
         document.querySelectorAll('[data-category]').forEach(button => {
             button.addEventListener('click', (e) => {
                 // Reset scroll position when changing categories
-                document.querySelector('main').scrollTo(0, 0);
+                this.elements.mainContent.scrollTo(0, 0);
                 
                 // Remove active class from all buttons
                 document.querySelectorAll('[data-category]').forEach(btn => 
@@ -169,7 +173,7 @@ class APIViewer {
     async loadEndpoints(category) {
         try {
             // Reset scroll position when loading new category
-            document.querySelector('main').scrollTo(0, 0);
+            this.elements.mainContent.scrollTo(0, 0);
             
             // Load path index first
             const indexResponse = await fetch(`${this.basePath}${this.currentVersion}/${category}/_path_index.json`);
@@ -210,7 +214,7 @@ class APIViewer {
             // Sort tags alphabetically
             const sortedTags = Object.keys(taggedEndpoints).sort();
 
-            this.apiContent.innerHTML = `
+            this.elements.apiContent.innerHTML = `
                 <div class="category-header">
                     <h2>${category}</h2>
                     ${data.info?.description ? `<p class="text-muted mb-0">${data.info.description}</p>` : ''}
@@ -463,12 +467,13 @@ class APIViewer {
     initThemeToggle() {
         const setTheme = (isDark) => {
             document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-            this.themeToggle.querySelector('i').classList.remove('bi-sun-fill', 'bi-moon-fill');
-            this.themeToggle.querySelector('i').classList.add(isDark ? 'bi-moon-fill' : 'bi-sun-fill');
+            const icon = this.elements.themeToggle.querySelector('i');
+            icon.classList.remove('bi-sun-fill', 'bi-moon-fill');
+            icon.classList.add(isDark ? 'bi-moon-fill' : 'bi-sun-fill');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         };
 
-        this.themeToggle.addEventListener('click', () => {
+        this.elements.themeToggle.addEventListener('click', () => {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             setTheme(!isDark);
         });
