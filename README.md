@@ -85,7 +85,21 @@ Visit http://localhost:8000 in your browser.
   - Tag-based categorization
   - Endpoint summaries
 - 💾 Persistent theme preferences
-- 📱 Mobile-friendly interface
+- 📱 Mobile-optimized interface:
+  - Collapsible sidebar
+  - Responsive tables
+  - Touch-friendly controls
+  - Improved method display on small screens
+
+## Mobile View Features
+
+- Slide-out navigation menu
+- Mobile-optimized header layout
+- Improved method visibility (methods appear above endpoints)
+- Touch-friendly controls
+- Responsive tables
+- Backdrop overlay for sidebar
+- Automatic menu closing after selection
 
 ## Screenshots
 

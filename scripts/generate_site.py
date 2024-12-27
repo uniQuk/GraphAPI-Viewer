@@ -38,6 +38,12 @@ def copy_static_assets():
         base_dir / 'src/styles/style.css',
         base_dir / 'build/assets/css/style.css'
     )
+
+    # Copy Mobile CSS
+    shutil.copy2(
+        base_dir / 'src/styles/mobile.css',
+        base_dir / 'build/assets/css/mobile.css'
+    )
     
     # Copy JS
     shutil.copy2(
