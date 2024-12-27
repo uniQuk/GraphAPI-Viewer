@@ -113,7 +113,7 @@ class APIViewer {
             this.router.tag = null;
             this.router.endpoint = null;
             this.updateURL();
-            this.loadCategories();
+            this.showEmptyState();
         });
 
         this.elements.homeButton.addEventListener('click', () => {
@@ -123,14 +123,18 @@ class APIViewer {
                 tag: null,
                 endpoint: null
             };
-            window.location.hash = '';
-            this.elements.apiContent.innerHTML = `
-                <div class="text-center text-muted" id="empty-state">
-                    <i class="bi bi-arrow-left-circle fs-1"></i>
-                    <h4 class="mt-3">Select a category from the sidebar</h4>
-                </div>
-            `;
+            this.updateURL();
+            this.showEmptyState();
         });
+    }
+
+    showEmptyState() {
+        this.elements.apiContent.innerHTML = `
+            <div class="text-center text-muted" id="empty-state">
+                <i class="bi bi-arrow-left-circle fs-1"></i>
+                <h4 class="mt-3">Select a category from the sidebar</h4>
+            </div>
+        `;
     }
 
     async loadCategories() {
