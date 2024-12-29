@@ -182,11 +182,17 @@ class APIViewer {
                 path
             }));
 
+            // Load enriched data for permissions
+            const enrichedResponse = await fetch(`${this.basePath}${this.currentVersion}/${category}/_enriched.json`);
+            const enrichedData = await enrichedResponse.json();
+            
             // Load all endpoint data first to get tags and summaries
             const endpointData = await Promise.all(
                 endpoints.map(async endpoint => {
                     const data = await this.loadEndpointData(category, endpoint.hash);
-                    return { ...endpoint, data };
+                    // Merge enriched data
+                    const enriched = enrichedData[endpoint.hash] || {};
+                    return { ...endpoint, data, enriched };
                 })
             );
 
@@ -304,11 +310,13 @@ class APIViewer {
         `;
     }
 
-    renderEndpointDetails(data) {
+    renderEndpointDetails(data, enriched = {}) {
         const [path, pathData] = Object.entries(data)[0];
         return `
             <div class="endpoint-content">
-                ${Object.entries(pathData).map(([method, methodData]) => `
+                ${Object.entries(pathData).map(([method, methodData]) => {
+                    const methodEnriched = enriched?.methods?.[method] || {};
+                    return `
                     <div class="method-section method-bg ${method.toLowerCase()}">
                         <div class="method-header d-flex align-items-center gap-2">
                             <span class="method ${method.toLowerCase()}">${method}</span>
@@ -330,8 +338,87 @@ class APIViewer {
                         ` : ''}
                         ${this.renderParameters(methodData.parameters)}
                         ${this.renderResponseSchema(methodData.responses)}
+                        ${this.renderEnrichedData(methodEnriched)}
                     </div>
-                `).join('')}
+                `}).join('')}
+            </div>
+        `;
+    }
+
+    renderEnrichedData(enriched) {
+        if (!enriched || (!enriched.permissions && !enriched.command)) return '';
+
+        return `
+            <div class="mb-4">
+                <h5 class="mb-3">Additional Information</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            ${enriched.command ? `
+                                <tr>
+                                    <td><strong>PowerShell</strong></td>
+                                    <td>
+                                        <code class="powershell-command">${enriched.command}</code>
+                                    </td>
+                                </tr>
+                            ` : ''}
+                            ${enriched.permissions?.length ? `
+                                <tr>
+                                    <td style="width: 20%"><strong>Permissions</strong></td>
+                                    <td>
+                                        ${enriched.permissions.map(p => `
+                                            <div class="mb-2">
+                                                <code>${p.Name}</code>
+                                                ${p.IsLeastPrivilege ? '<span class="badge bg-success ms-2">Least Privileged</span>' : ''}
+                                                ${p.IsAdmin ? '<span class="badge bg-warning ms-2">Admin Required</span>' : ''}
+                                                <span class="badge bg-info ms-2">${p.PermissionType}</span>
+                                                <div class="text-muted small mt-1">${p.FullDescription || p.Description}</div>
+                                            </div>
+                                        `).join('')}
+                                    </td>
+                                </tr>
+                            ` : ''}
+                            ${enriched.apiReference ? `
+                                <tr>
+                                    <td><strong>API Reference</strong></td>
+                                    <td>
+                                        <a href="${enriched.apiReference}" target="_blank" rel="noopener noreferrer">
+                                            ${enriched.apiReference}
+                                            <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            ` : ''}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+
+    renderPermissions(permissions = []) {
+        if (!permissions?.length) return '';
+        
+        return `
+            <div class="mb-4">
+                <h5 class="mb-3">Required Permissions</h5>
+                <div class="permissions-list">
+                    ${permissions.map(permission => `
+                        <div class="permission-item">
+                            <div class="permission-header">
+                                <span class="permission-name">${permission.Name}</span>
+                                ${permission.IsLeastPrivilege ? 
+                                    '<span class="badge bg-success">Least Privilege</span>' : ''}
+                                ${permission.IsAdmin ? 
+                                    '<span class="badge bg-warning">Admin Required</span>' : ''}
+                                <span class="badge bg-info">${permission.PermissionType}</span>
+                            </div>
+                            <div class="permission-description text-muted">
+                                ${permission.FullDescription || permission.Description}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
             </div>
         `;
     }
@@ -482,8 +569,15 @@ class APIViewer {
         if (!detailsSection.classList.contains('show')) {
             const hash = endpointRow.dataset.hash;
             const data = await this.loadEndpointData(this.router.category, hash);
+            
+            // Load enriched data
+            const enrichedResponse = await fetch(`${this.basePath}${this.currentVersion}/${this.router.category}/_enriched.json`);
+            const enrichedData = await enrichedResponse.json();
+            const enriched = enrichedData[hash] || {};
+            
             if (data) {
-                detailsSection.querySelector('.endpoint-content').innerHTML = this.renderEndpointDetails(data);
+                detailsSection.querySelector('.endpoint-content').innerHTML = 
+                    this.renderEndpointDetails(data, enriched);
             }
         }
         
